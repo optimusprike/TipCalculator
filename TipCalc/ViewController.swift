@@ -21,6 +21,7 @@ class ViewController: UIViewController {
     var tipval: Double = 0.0
     var total: Double = 0.0
     var SplitLabelText: String  = "Total / "
+    var currency : String = ""
     
     @IBOutlet weak var SplitLabel: UILabel!
     
@@ -28,7 +29,22 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         BillField.becomeFirstResponder()
         defaults.synchronize()
+        let locale = Locale.current
+        currency = locale.currencySymbol!
         tipval = defaults.double(forKey:"DefaultTip")
+        let tipPercentages = [tipval,0.1, 0.15, 0.2]
+        let num = tipPercentages[DefaultValues.selectedSegmentIndex]
+        
+        let bill = NSString(string: BillField.text!).doubleValue
+        let tip = bill * num
+        total = bill + tip
+        
+        
+        
+        TipLabel.text = String(format: currency + "%.2f", tip)
+        TotalLabel.text = String(format: currency + "%.2f", total)
+        SplitTotal.text = String(format: currency + "%.2f", total/Double(Stepper.value))
+        self.SplitLabel.text = SplitLabelText + Int(Stepper.value).description
         // Do any additional setup after loading the view, typically from a nib.
     }
 
@@ -54,9 +70,11 @@ class ViewController: UIViewController {
         let tip = bill * num
         total = bill + tip
         
-        TipLabel.text = String(format: "$%.2f", tip)
-        TotalLabel.text = String(format: "$%.2f", total)
-        SplitTotal.text = String(format: "$%.2f", total/Double(Stepper.value))
+        
+        
+        TipLabel.text = String(format: currency + "%.2f", tip)
+        TotalLabel.text = String(format: currency + "%.2f", total)
+        SplitTotal.text = String(format: currency + "%.2f", total/Double(Stepper.value))
         self.SplitLabel.text = SplitLabelText + Int(Stepper.value).description
         
         
@@ -65,7 +83,7 @@ class ViewController: UIViewController {
     
     @IBAction func onClick(_ sender: AnyObject) {
         
-        SplitTotal.text = String(format: "$%.2f", total/Double(Stepper.value))
+        SplitTotal.text = String(format: currency + "%.2f", total/Double(Stepper.value))
         self.SplitLabel.text = SplitLabelText + Int(Stepper.value).description
     }
 }
